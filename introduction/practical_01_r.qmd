@@ -1,0 +1,961 @@
+---
+title: "Practical 1: Introduction to R"
+subtitle: "Urban Analytics: Practical Labs"
+format: live-html
+engine: knitr
+---
+
+{{< include ../_extensions/r-wasm/live/_knitr.qmd >}}
+
+::: {.callout-note}
+## Browser-Based R
+
+This practical runs R directly in your web browser using WebR — there is nothing to install. Code blocks are interactive: you can edit them and click **Run** to execute. The first time you load this page, it may take a moment to download the R environment. Be patient!
+:::
+
+::: {.learning-objectives}
+## Learning Objectives
+
+By the end of this practical you will be able to:
+
+- Use R as a calculator to perform arithmetic operations
+- Create and work with variables of different data types
+- Build and manipulate vectors, lists, and factors
+- Apply common string and numeric functions
+- Use comparison and logical operators
+- Write conditional statements with `if` and `else`
+- Create basic loops with `for` and `while`
+- Define and call your own functions
+- Create and inspect a simple data frame
+:::
+
+This practical supports **Chapter 1: Questioning the City through Urban Analytics** and **Chapter 3: Urban Data Infrastructure** of the Urban Analytics book (Singleton, Spielman & Folch, 2018). The analytical methods introduced throughout the book all depend on the programming foundations covered here. Whether you are calculating descriptive statistics about a neighbourhood, visualising urban data, or building a predictive model, the building blocks are the same: variables, data structures, functions, and control flow.
+
+
+## Getting Started: R as a Calculator
+
+R is a programming language designed for statistical computing and data analysis. It is widely used in urban analytics, geography, and the social sciences because of its powerful data manipulation and visualisation capabilities, and because it is free and open source.
+
+At its simplest, R works like a calculator. Try running the code below — click anywhere in the code block to edit it, then press **Run Code** (or Ctrl/Cmd+Enter):
+
+```{webr}
+1 + 5
+```
+
+You can use all the standard arithmetic operations: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`), and exponentiation (`^`). R follows the normal mathematical order of operations (BODMAS/PEMDAS), so multiplication and division are evaluated before addition and subtraction.
+
+```{webr}
+# Try some arithmetic
+3 - 2
+4 / 7
+8 * 2
+2^4
+(10 + 5) * 3
+```
+
+Lines beginning with `#` are **comments** — R ignores them entirely. Comments are there for you, the human reader, to explain what the code is doing. Writing good comments is an important habit to develop, especially when your analysis becomes more complex.
+
+
+## Variables and Assignment
+
+Performing calculations one at a time is useful, but most of the time you will want to store values so you can reuse them later. In R, you store a value in a **variable** using the assignment operator `<-`. Think of a variable as a labelled box: you put a value into the box, give it a name, and can retrieve that value whenever you need it.
+
+```{webr}
+a <- 5
+b <- 10
+a + b
+```
+
+When you run this code, R stores the value `5` in a variable called `a` and `10` in a variable called `b`. The third line retrieves both values and adds them together. Notice that R does not print anything when you assign a value — it only produces output when you ask it to evaluate an expression or explicitly print a variable.
+
+You can name variables almost anything you like, but there are a few rules: names must start with a letter, can contain letters, numbers, dots, and underscores, and are case-sensitive (so `myData` and `mydata` are different variables). It is good practice to use descriptive names — `population_count` is much more informative than `x`.
+
+```{webr}
+# Descriptive variable names make code easier to understand
+city_name <- "Liverpool"
+population <- 486100
+area_sq_km <- 111.8
+
+# Calculate population density
+pop_density <- population / area_sq_km
+pop_density
+```
+
+::: {.callout-tip}
+## The Assignment Operator
+R uses `<-` for assignment rather than `=`. While `=` does work in most cases, `<-` is the conventional style in R and is what you will see in most R code. A handy keyboard shortcut in RStudio is **Alt + -** (Windows) or **Option + -** (Mac), which inserts ` <- `.
+:::
+
+
+## Data Types
+
+Every value in R has a **type** (also called a **class**) that determines what you can do with it. The most common types you will encounter are:
+
+- **Numeric** (also called double): numbers with decimal points, like `54.8` or `3.14`
+- **Integer**: whole numbers, like `51L` (the `L` suffix tells R to treat it as an integer)
+- **Logical**: `TRUE` or `FALSE` values, used for conditions and comparisons
+- **Character**: text strings, enclosed in quotes, like `"Hello"` or `"Liverpool"`
+
+You can check the type of any value or variable using the `class()` function:
+
+```{webr}
+# Numeric
+z <- 54.8
+class(z)
+
+# Integer
+y <- 51L
+class(y)
+
+# Logical
+q <- TRUE
+class(q)
+
+# Character
+s <- "Hello"
+class(s)
+```
+
+R also provides a family of `is.*()` functions to test whether a variable is a specific type. These return `TRUE` or `FALSE`:
+
+```{webr}
+is.numeric(54.8)
+is.character("Hello")
+is.logical(TRUE)
+```
+
+### Converting Between Types
+
+Sometimes you need to convert a value from one type to another. For example, you might receive population data as text (perhaps read from a file) and need to convert it to a number before you can do calculations. R provides `as.*()` functions for this:
+
+```{webr}
+# A number stored as text — you cannot do arithmetic with it
+pop_text <- "486100"
+class(pop_text)
+
+# Convert to numeric
+pop_number <- as.numeric(pop_text)
+class(pop_number)
+pop_number / 1000
+
+# Convert a number to text
+as.character(3.14)
+```
+
+Be careful with conversions — if R cannot make sense of the conversion, it will return `NA` (R's way of representing missing values) and give you a warning:
+
+```{webr}
+as.numeric("hello")
+```
+
+
+::: {.exercise-block}
+### Exercise 1: Variables and Types
+
+- Create a variable called `city` containing the name of a city you know
+- Create a variable called `pop` containing its approximate population
+- Create a logical variable called `is_capital` indicating whether it is a capital city
+- Check the class of each variable using `class()`
+
+```{webr}
+#| exercise: ex_types
+
+```
+
+```{webr}
+#| exercise: ex_types
+#| solution: true
+city <- "Manchester"
+pop <- 553230
+is_capital <- FALSE
+
+class(city)
+class(pop)
+class(is_capital)
+```
+
+```{webr}
+#| exercise: ex_types
+#| hint: true
+# Use <- to assign values
+# Text goes in quotes: "Manchester"
+# Numbers go without quotes: 553230
+# Logical values are TRUE or FALSE (no quotes, all caps)
+```
+:::
+
+
+## Vectors
+
+So far we have stored single values in variables, but in data analysis you almost always work with collections of values. In R, the most fundamental collection is a **vector** — an ordered sequence of values that are all the same type. You create vectors with the `c()` function (short for "combine"):
+
+```{webr}
+# A numeric vector of population values (thousands)
+populations <- c(486, 553, 1142, 267, 474)
+
+# A character vector of city names
+cities <- c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds")
+
+# Display them
+populations
+cities
+```
+
+### Vector Arithmetic
+
+One of R's great strengths is that operations on vectors are applied to every element automatically. This is called **vectorisation** and it means you rarely need to write loops for simple calculations:
+
+```{webr}
+v_1 <- c(2, 3, 5, 6, 7, 8, 9)
+v_2 <- c(4, 7, 9, 12, 11, 1, 3)
+
+# Subtract element-by-element
+v_1 - v_2
+
+# Multiply every element by 10
+v_1 * 10
+
+# This also works with our city data
+pop_millions <- populations / 1000
+pop_millions
+```
+
+### Indexing Vectors
+
+You can extract specific elements from a vector using square brackets `[]`. R uses **1-based indexing**, meaning the first element is at position 1:
+
+```{webr}
+cities <- c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds")
+
+# Get the first city
+cities[1]
+
+# Get the third city
+cities[3]
+
+# Get the second and fourth cities
+cities[c(2, 4)]
+
+# Get all cities except the first
+cities[-1]
+
+# Get the first three cities
+cities[1:3]
+```
+
+### Useful Vector Functions
+
+R has many built-in functions that work with vectors:
+
+```{webr}
+values <- c(12, 5, 8, 23, 3, 17, 9)
+
+length(values)   # How many elements?
+sort(values)     # Sort in ascending order
+rev(values)      # Reverse the order
+sum(values)      # Sum all elements
+unique(c(1, 2, 2, 3, 3, 3))  # Remove duplicates
+```
+
+
+## Lists
+
+Vectors require all elements to be the same type. When you need to store a mix of different types together, you use a **list**. Lists are very flexible — they can hold numbers, text, logical values, vectors, and even other lists:
+
+```{webr}
+# A list containing different types of information about a city
+city_info <- list("Liverpool", 486100, TRUE, c(53.4084, -2.9916))
+city_info
+```
+
+You access list elements with double square brackets `[[]]` to extract the actual value, or single brackets `[]` to get a sub-list:
+
+```{webr}
+# Extract the second element (population)
+city_info[[2]]
+
+# Extract the coordinates vector, then get the latitude
+city_info[[4]]
+city_info[[4]][1]
+```
+
+Lists can also have **named elements**, which makes them much easier to work with:
+
+```{webr}
+city <- list(
+  name = "Liverpool",
+  population = 486100,
+  is_capital = FALSE,
+  coordinates = c(53.4084, -2.9916)
+)
+
+# Access by name using $
+city$name
+city$population
+```
+
+
+## Factors
+
+In urban analytics and the social sciences, you frequently work with **categorical data** — variables that take a limited set of values, such as land use types, socioeconomic classifications, or survey responses. R has a special data type called a **factor** for handling this kind of data.
+
+### Nominal Factors
+
+Nominal categories have no inherent order (e.g., city names, land use types):
+
+```{webr}
+# A vector of land use types for different parcels
+land_use <- c("Residential", "Commercial", "Residential", "Industrial",
+              "Commercial", "Residential", "Park")
+
+# Convert to a factor
+land_use_factor <- factor(land_use)
+land_use_factor
+
+# See the unique levels
+levels(land_use_factor)
+
+# Count how many of each type
+summary(land_use_factor)
+```
+
+### Ordinal Factors
+
+Ordinal categories have a meaningful order (e.g., survey responses, deprivation ranks):
+
+```{webr}
+satisfaction <- c("Very Unhappy", "Unhappy", "Fine", "Happy",
+                  "Very Happy", "Fine", "Happy", "Very Happy",
+                  "Unhappy", "Fine", "Happy", "Very Happy")
+
+# Create an ordered factor — specify the levels in order
+sat_factor <- factor(satisfaction,
+                     levels = c("Very Unhappy", "Unhappy", "Fine",
+                                "Happy", "Very Happy"),
+                     ordered = TRUE)
+
+# R now knows the ordering
+sat_factor
+table(sat_factor)
+```
+
+The advantage of ordered factors is that R understands comparisons between levels:
+
+```{webr}
+sat_factor[1] < sat_factor[4]  # Is "Very Unhappy" less than "Happy"?
+```
+
+
+## Working with Strings
+
+Text data — called **strings** or **character** values in R — is common in urban analytics. You might work with place names, postcodes, survey responses, or text scraped from the web. R provides many functions for working with strings:
+
+```{webr}
+greeting <- "Hello, Urban Analytics!"
+
+# How many characters?
+nchar(greeting)
+
+# Extract a substring (characters 8 to 12)
+substr(greeting, 8, 12)
+
+# Convert case
+tolower(greeting)
+toupper(greeting)
+
+# Find and replace text
+gsub("Hello", "Welcome to", greeting)
+```
+
+### Combining Strings
+
+The `paste()` and `paste0()` functions join strings together — this is very useful for creating labels, file paths, or messages:
+
+```{webr}
+city <- "Liverpool"
+year <- 2024
+
+# paste() adds a space between elements by default
+paste("The city is", city)
+
+# paste0() joins with no separator
+paste0("Report_", city, "_", year, ".csv")
+
+# You can also specify a custom separator
+paste("Liverpool", "Manchester", "Leeds", sep = " | ")
+```
+
+### Searching Within Strings
+
+The `grep()` function finds which elements of a vector match a pattern:
+
+```{webr}
+cities <- c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds")
+
+# Which cities contain "pool"?
+grep("pool", cities)
+
+# Return the matching values instead of positions
+grep("pool", cities, value = TRUE)
+
+# Does each element contain "er"?
+grepl("er", cities)
+```
+
+
+## Numeric and Statistical Functions
+
+R was built for statistics, so it has a rich set of built-in functions for numerical summaries. These are essential for understanding urban data:
+
+```{webr}
+# Generate some example data — 100 random values between 0 and 1
+set.seed(42)  # Makes the "random" numbers reproducible
+h <- runif(100, 0.0, 1.0)
+
+# Central tendency
+mean(h)
+median(h)
+
+# Spread
+sd(h)       # Standard deviation
+range(h)    # Minimum and maximum
+min(h)
+max(h)
+
+# A comprehensive summary
+summary(h)
+```
+
+Other useful numeric functions:
+
+```{webr}
+round(5.756, 2)   # Round to 2 decimal places
+round(5.756, 0)   # Round to nearest integer
+sqrt(25)           # Square root
+log10(1000)        # Log base 10
+abs(-7)            # Absolute value
+```
+
+
+::: {.exercise-block}
+### Exercise 2: Vector Operations
+
+The populations (in thousands) of five English cities are: Liverpool: 486, Manchester: 553, Birmingham: 1142, Newcastle: 267, Leeds: 474.
+
+1. Create a numeric vector called `pops` with these values
+2. Create a character vector called `names` with the city names
+3. Calculate the mean population
+4. Find which city has the maximum population (hint: use `which.max()`)
+
+```{webr}
+#| exercise: ex_vectors
+
+```
+
+```{webr}
+#| exercise: ex_vectors
+#| solution: true
+pops <- c(486, 553, 1142, 267, 474)
+names <- c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds")
+
+mean(pops)
+names[which.max(pops)]
+```
+
+```{webr}
+#| exercise: ex_vectors
+#| hint: true
+# which.max() returns the position of the largest value
+# You can use that position to index the names vector
+# e.g., names[which.max(pops)]
+```
+:::
+
+
+## Operators
+
+### Arithmetic Operators
+
+You have already seen the basic arithmetic operators. Here is the complete set:
+
+```{webr}
+10 + 3    # Addition
+10 - 3    # Subtraction
+10 * 3    # Multiplication
+10 / 3    # Division
+10 ^ 3    # Exponentiation (10 to the power of 3)
+10 %% 3   # Modulo (remainder after division)
+10 %/% 3  # Integer division (quotient without remainder)
+```
+
+### Comparison Operators
+
+Comparison operators compare two values and return `TRUE` or `FALSE`. These are fundamental for filtering data:
+
+```{webr}
+5 < 7     # Less than
+8 > 2     # Greater than
+7 <= 5    # Less than or equal to
+2 >= 2    # Greater than or equal to
+3 == 3    # Equal to (note: two equals signs!)
+3 != 4    # Not equal to
+```
+
+### Logical Operators
+
+Logical operators let you combine conditions. This is essential when you need to select data that meets multiple criteria — for example, "areas with population greater than 10,000 **and** median income below £25,000":
+
+```{webr}
+a <- "Hello"
+b <- "Goodbye"
+
+# OR: TRUE if at least one side is TRUE
+(a == "Hello") | (b == "Dog")
+
+# AND: TRUE only if both sides are TRUE
+(a == "Hello") & (b == "Dog")
+
+# NOT: reverses TRUE to FALSE and vice versa
+!(a == "Hello")
+```
+
+Logical operators work element-wise on vectors too, which makes them powerful for data filtering:
+
+```{webr}
+ages <- c(22, 45, 18, 67, 33, 15, 52)
+
+# Which ages are between 18 and 65?
+(ages >= 18) & (ages <= 65)
+
+# Extract just those values
+ages[(ages >= 18) & (ages <= 65)]
+```
+
+
+## Conditional Statements
+
+Programs often need to make decisions — do one thing if a condition is met, and something different otherwise. R uses `if` and `else` for this:
+
+```{webr}
+temperature <- 28
+
+if (temperature > 25) {
+  print("It's a warm day — consider the urban heat island effect!")
+} else {
+  print("It's a cool day.")
+}
+```
+
+You can chain multiple conditions with `else if`:
+
+```{webr}
+temperature <- 15
+
+if (temperature > 30) {
+  print("Hot — potential heat stress in urban areas")
+} else if (temperature > 20) {
+  print("Warm — comfortable outdoor conditions")
+} else if (temperature > 10) {
+  print("Cool — typical UK urban temperature")
+} else {
+  print("Cold — increased energy demand for heating")
+}
+```
+
+The condition inside `if()` must evaluate to a single `TRUE` or `FALSE`. This is where the comparison and logical operators you learned above become essential.
+
+
+::: {.exercise-block}
+### Exercise 3: Conditionals
+
+Write an if/else statement that:
+
+- Creates a variable `density` with a value of your choosing
+- Prints "High density" if density is above 5000 (people per sq km)
+- Prints "Medium density" if density is between 1000 and 5000
+- Prints "Low density" otherwise
+
+```{webr}
+#| exercise: ex_conditional
+
+```
+
+```{webr}
+#| exercise: ex_conditional
+#| solution: true
+density <- 3200
+
+if (density > 5000) {
+  print("High density")
+} else if (density >= 1000) {
+  print("Medium density")
+} else {
+  print("Low density")
+}
+```
+
+```{webr}
+#| exercise: ex_conditional
+#| hint: true
+# Use if () { } else if () { } else { }
+# Remember: > for greater than, >= for greater than or equal to
+```
+:::
+
+
+## Loops
+
+Loops let you repeat an operation multiple times. This is useful when you need to process a collection of items — for example, calculating a statistic for each neighbourhood in a city.
+
+### For Loops
+
+A `for` loop iterates over each element of a vector:
+
+```{webr}
+# Print each city name
+cities <- c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds")
+
+for (city in cities) {
+  print(paste("Processing:", city))
+}
+```
+
+You can use the loop variable in calculations:
+
+```{webr}
+# Calculate the square of each number from 1 to 5
+for (i in 1:5) {
+  result <- i^2
+  print(paste(i, "squared is", result))
+}
+```
+
+### While Loops
+
+A `while` loop repeats as long as a condition remains `TRUE`. Be careful — if the condition never becomes `FALSE`, the loop runs forever!
+
+```{webr}
+# Double a value until it exceeds 1000
+value <- 1
+count <- 0
+
+while (value <= 1000) {
+  value <- value * 2
+  count <- count + 1
+}
+
+print(paste("After", count, "doublings, the value is", value))
+```
+
+::: {.callout-tip}
+## Vectorisation vs. Loops
+In R, you can often avoid loops by using vectorised operations (applying a function to an entire vector at once). Vectorised code is typically faster and more concise. For example, `v * 10` is better than looping through each element and multiplying by 10. However, loops are still useful when each iteration depends on the result of the previous one, or when the logic is complex.
+:::
+
+
+## Writing Functions
+
+As your analyses grow, you will find yourself repeating the same sequence of operations. Rather than copying and pasting code, you can wrap it in a **function** — a reusable block of code that takes inputs (called **arguments** or **parameters**) and returns a result.
+
+```{webr}
+# Define a function to calculate population density
+calc_density <- function(population, area) {
+  density <- population / area
+  return(density)
+}
+
+# Use the function
+calc_density(486100, 111.8)
+calc_density(553230, 115.6)
+```
+
+Functions keep your code organised and reduce errors. If you need to change how density is calculated, you only need to change it in one place.
+
+You can also set **default values** for arguments:
+
+```{webr}
+# Function with a default unit conversion
+pop_summary <- function(name, population, unit = "thousands") {
+  if (unit == "thousands") {
+    pop_display <- population / 1000
+  } else {
+    pop_display <- population
+  }
+  print(paste(name, "has a population of", round(pop_display, 1), unit))
+}
+
+pop_summary("Liverpool", 486100)
+pop_summary("Liverpool", 486100, unit = "people")
+```
+
+
+::: {.exercise-block}
+### Exercise 4: Writing a Function
+
+Write a function called `classify_area` that takes a population density value and returns a character string classification:
+
+- `"Rural"` if density < 100
+- `"Suburban"` if density >= 100 and < 1000
+- `"Urban"` if density >= 1000 and < 5000
+- `"Dense Urban"` if density >= 5000
+
+Test it with: `classify_area(3500)` — it should return `"Urban"`.
+
+```{webr}
+#| exercise: ex_function
+
+```
+
+```{webr}
+#| exercise: ex_function
+#| solution: true
+classify_area <- function(density) {
+  if (density < 100) {
+    return("Rural")
+  } else if (density < 1000) {
+    return("Suburban")
+  } else if (density < 5000) {
+    return("Urban")
+  } else {
+    return("Dense Urban")
+  }
+}
+
+classify_area(3500)
+classify_area(50)
+classify_area(8000)
+```
+
+```{webr}
+#| exercise: ex_function
+#| hint: true
+# Define with: function_name <- function(argument) { ... }
+# Use if/else if/else inside the function body
+# Use return() to send back the result
+```
+:::
+
+
+## Data Frames: A First Look
+
+The most important data structure in R for data analysis is the **data frame**. A data frame is essentially a table — like a spreadsheet — where each column is a variable and each row is an observation. Almost all urban data you work with will be stored in data frames.
+
+```{webr}
+# Create a simple data frame
+cities_df <- data.frame(
+  city = c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"),
+  population = c(486100, 553230, 1141816, 267760, 474632),
+  area_km2 = c(111.8, 115.6, 267.8, 113.4, 551.7)
+)
+
+# View the data frame
+cities_df
+```
+
+### Inspecting a Data Frame
+
+R provides several functions to explore a data frame:
+
+```{webr}
+# Dimensions: rows and columns
+nrow(cities_df)
+ncol(cities_df)
+dim(cities_df)
+
+# Structure: column names and types
+str(cities_df)
+
+# Column names
+names(cities_df)
+
+# Summary statistics for each column
+summary(cities_df)
+```
+
+### Accessing Columns and Rows
+
+You can access columns using `$` notation or square brackets:
+
+```{webr}
+# Access a column by name with $
+cities_df$city
+cities_df$population
+
+# Access a specific row (row 2)
+cities_df[2, ]
+
+# Access a specific cell (row 2, column 3)
+cities_df[2, 3]
+
+# Access a column by position
+cities_df[, 2]
+```
+
+### Adding New Columns
+
+You can create new columns by assigning values:
+
+```{webr}
+# Calculate population density and add it as a new column
+cities_df$density <- cities_df$population / cities_df$area_km2
+cities_df$density <- round(cities_df$density, 1)
+
+cities_df
+```
+
+
+::: {.exercise-block}
+### Exercise 5: Working with Data Frames
+
+Using the `cities_df` data frame created in the code block below:
+
+1. Find the city with the highest population density
+2. Calculate the total population of all five cities
+3. Create a new logical column called `large_city` that is `TRUE` if the population is above 500,000
+
+```{webr}
+#| exercise: ex_dataframe
+# The data frame is recreated here because each exercise runs independently
+cities_df <- data.frame(
+  city = c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"),
+  population = c(486100, 553230, 1141816, 267760, 474632),
+  area_km2 = c(111.8, 115.6, 267.8, 113.4, 551.7)
+)
+cities_df$density <- round(cities_df$population / cities_df$area_km2, 1)
+
+# Your code here
+
+```
+
+```{webr}
+#| exercise: ex_dataframe
+#| solution: true
+cities_df <- data.frame(
+  city = c("Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"),
+  population = c(486100, 553230, 1141816, 267760, 474632),
+  area_km2 = c(111.8, 115.6, 267.8, 113.4, 551.7)
+)
+cities_df$density <- round(cities_df$population / cities_df$area_km2, 1)
+
+# 1. City with highest density
+cities_df$city[which.max(cities_df$density)]
+
+# 2. Total population
+sum(cities_df$population)
+
+# 3. Large city indicator
+cities_df$large_city <- cities_df$population > 500000
+cities_df
+```
+
+```{webr}
+#| exercise: ex_dataframe
+#| hint: true
+# Use which.max() to find the position of the maximum value
+# Use sum() to add up all values in a column
+# Comparison operators (>) return TRUE/FALSE, which you can store in a column
+```
+:::
+
+
+## Getting Help
+
+R has built-in documentation for every function. You can access it using `?` followed by the function name:
+
+```{webr}
+?mean
+```
+
+This brings up a help page describing what the function does, what arguments it takes, and usually includes examples. When you encounter a new function, getting into the habit of reading its documentation is one of the best ways to learn R.
+
+
+::: {.capstone}
+## Capstone Exercise
+
+This exercise brings together everything you have learned in this practical. You have data on monthly average temperatures (°C) in London for 2023, provided in the code block below.
+
+1. Create a data frame with columns `month` and `temperature`
+2. Add a column called `season` that classifies each month: Dec-Feb = "Winter", Mar-May = "Spring", Jun-Aug = "Summer", Sep-Nov = "Autumn" (hint: you can manually create a vector of season labels)
+3. Write a function called `temp_to_f` that converts Celsius to Fahrenheit (formula: F = C × 9/5 + 32)
+4. Use your function to add a `temp_f` column
+5. Find the mean temperature for the year in both Celsius and Fahrenheit
+
+```{webr}
+#| exercise: ex_capstone
+#| min-lines: 20
+months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+temps <- c(5.1, 5.6, 8.2, 10.0, 14.2, 18.7,
+           20.5, 19.8, 16.3, 12.5, 8.1, 5.8)
+
+# Your code here
+
+```
+
+```{webr}
+#| exercise: ex_capstone
+#| solution: true
+months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+temps <- c(5.1, 5.6, 8.2, 10.0, 14.2, 18.7,
+           20.5, 19.8, 16.3, 12.5, 8.1, 5.8)
+
+# 1. Create data frame
+london <- data.frame(month = months, temperature = temps)
+
+# 2. Add season column
+london$season <- c("Winter", "Winter", "Spring", "Spring", "Spring", "Summer",
+                    "Summer", "Summer", "Autumn", "Autumn", "Autumn", "Winter")
+
+# 3. Conversion function
+temp_to_f <- function(celsius) {
+  return(celsius * 9/5 + 32)
+}
+
+# 4. Add Fahrenheit column
+london$temp_f <- round(temp_to_f(london$temperature), 1)
+
+# 5. Mean temperatures
+print(paste("Mean (Celsius):", round(mean(london$temperature), 1)))
+print(paste("Mean (Fahrenheit):", round(mean(london$temp_f), 1)))
+
+# Display the full data frame
+london
+```
+
+```{webr}
+#| exercise: ex_capstone
+#| hint: true
+# Step 1: data.frame(column_name = vector, ...)
+# Step 2: Create a character vector with 12 elements matching the seasons
+# Step 3: function(celsius) { celsius * 9/5 + 32 }
+# Step 4: Apply the function to the temperature column
+# Step 5: mean() calculates the average
+```
+:::
+
+
+## Summary
+
+In this practical you have learned the fundamental building blocks of programming in R:
+
+- **Variables** store values for reuse, and every value has a **type** (numeric, character, logical, integer)
+- **Vectors** hold ordered collections of values of the same type, and support element-wise operations
+- **Lists** hold collections of mixed types, and can be named for easy access
+- **Factors** represent categorical data, and can be ordered or unordered
+- **String functions** let you manipulate text data (searching, replacing, combining)
+- **Numeric functions** provide statistical summaries (mean, median, standard deviation)
+- **Operators** perform arithmetic, comparison, and logical operations
+- **Conditional statements** (`if`/`else`) let your code make decisions
+- **Loops** (`for`, `while`) repeat operations over collections of values
+- **Functions** package reusable logic and make your code more organised
+- **Data frames** are R's core structure for tabular data — you will use them extensively in every subsequent practical
+
+In the next practical, you will learn how to import real-world data into R, manipulate it using powerful packages like `dplyr`, and prepare it for analysis.
+
+
+## Further Resources
+
+- [R for Data Science (2nd edition)](https://r4ds.hadley.nz/) — Hadley Wickham, Mine Çetinkaya-Rundel & Garrett Grolemund
+- [An Introduction to R](https://cran.r-project.org/doc/manuals/R-intro.html) — Official R documentation
+- [Geocomputation with R](https://r.geocompx.org/) — Robin Lovelace, Jakub Nowosad & Jannes Muenchow

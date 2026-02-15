@@ -1,0 +1,1019 @@
+---
+title: "Practical 1: Introduction to Python"
+subtitle: "Urban Analytics: Practical Labs"
+format: live-html
+engine: knitr
+---
+
+{{< include ../_extensions/r-wasm/live/_knitr.qmd >}}
+
+::: {.callout-note}
+## Browser-Based Python
+
+This practical runs Python directly in your web browser using Pyodide — there is nothing to install. Code blocks are interactive: you can edit them and click **Run** to execute. The first time you load this page, it may take a moment to download the Python environment. Be patient!
+:::
+
+::: {.learning-objectives}
+## Learning Objectives
+
+By the end of this practical you will be able to:
+
+- Use Python as a calculator to perform arithmetic operations
+- Create and work with variables of different data types
+- Build and manipulate lists, tuples, and dictionaries
+- Apply common string and numeric functions
+- Use comparison and logical operators
+- Write conditional statements with `if`, `elif`, and `else`
+- Create basic loops with `for` and `while`
+- Define and call your own functions
+- Create and inspect a simple DataFrame using pandas
+:::
+
+This practical supports **Chapter 1: Questioning the City through Urban Analytics** and **Chapter 3: Urban Data Infrastructure** of the Urban Analytics book (Singleton, Spielman & Folch, 2018). The analytical methods introduced throughout the book all depend on the programming foundations covered here. Whether you are calculating descriptive statistics about a neighbourhood, visualising urban data, or building a predictive model, the building blocks are the same: variables, data structures, functions, and control flow.
+
+
+## Getting Started: Python as a Calculator
+
+Python is a general-purpose programming language that has become the most widely used language for data science and analytics. It is popular in urban analytics, geography, and the social sciences because of its readability, its extensive ecosystem of data analysis libraries, and because it is free and open source.
+
+At its simplest, Python works like a calculator. Try running the code below — click anywhere in the code block to edit it, then press **Run Code** (or Ctrl/Cmd+Enter):
+
+```{pyodide}
+1 + 5
+```
+
+You can use all the standard arithmetic operations: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`), and exponentiation (`**`). Python follows the normal mathematical order of operations (BODMAS/PEMDAS), so multiplication and division are evaluated before addition and subtraction.
+
+```{pyodide}
+# Try some arithmetic
+3 - 2
+4 / 7
+8 * 2
+2**4
+(10 + 5) * 3
+```
+
+Lines beginning with `#` are **comments** — Python ignores them entirely. Comments are there for you, the human reader, to explain what the code is doing. Writing good comments is an important habit to develop, especially when your analysis becomes more complex.
+
+::: {.callout-tip}
+## Displaying Multiple Results
+In a standard Python script, only the last expression in a block is displayed. If you want to see multiple results, use `print()` explicitly:
+```
+print(3 - 2)
+print(4 / 7)
+```
+In this interactive environment, the last expression is automatically displayed, but `print()` is still useful when you want to see several things.
+:::
+
+
+## Variables and Assignment
+
+Performing calculations one at a time is useful, but most of the time you will want to store values so you can reuse them later. In Python, you store a value in a **variable** using the `=` sign. Think of a variable as a labelled box: you put a value into the box, give it a name, and can retrieve that value whenever you need it.
+
+```{pyodide}
+a = 5
+b = 10
+a + b
+```
+
+When you run this code, Python stores the value `5` in a variable called `a` and `10` in a variable called `b`. The third line retrieves both values and adds them together.
+
+You can name variables almost anything you like, but there are a few rules: names must start with a letter or underscore, can contain letters, numbers, and underscores, and are case-sensitive (so `myData` and `mydata` are different variables). By convention, Python variable names use `snake_case` — lowercase words separated by underscores. It is good practice to use descriptive names — `population_count` is much more informative than `x`.
+
+```{pyodide}
+# Descriptive variable names make code easier to understand
+city_name = "Liverpool"
+population = 486100
+area_sq_km = 111.8
+
+# Calculate population density
+pop_density = population / area_sq_km
+print(pop_density)
+```
+
+
+## Data Types
+
+Every value in Python has a **type** that determines what you can do with it. The most common types you will encounter are:
+
+- **int**: whole numbers, like `51` or `-3`
+- **float**: numbers with decimal points, like `54.8` or `3.14`
+- **bool**: `True` or `False` values, used for conditions and comparisons
+- **str**: text strings, enclosed in quotes, like `"Hello"` or `'Liverpool'`
+
+You can check the type of any value or variable using the `type()` function:
+
+```{pyodide}
+# Float
+z = 54.8
+print(type(z))
+
+# Integer
+y = 51
+print(type(y))
+
+# Boolean
+q = True
+print(type(q))
+
+# String
+s = "Hello"
+print(type(s))
+```
+
+Python also provides `isinstance()` to test whether a variable is a specific type. This returns `True` or `False`:
+
+```{pyodide}
+print(isinstance(54.8, float))
+print(isinstance("Hello", str))
+print(isinstance(True, bool))
+```
+
+### Converting Between Types
+
+Sometimes you need to convert a value from one type to another. For example, you might receive population data as text (perhaps read from a file) and need to convert it to a number before you can do calculations. Python provides built-in functions for this:
+
+```{pyodide}
+# A number stored as text — you cannot do arithmetic with it
+pop_text = "486100"
+print(type(pop_text))
+
+# Convert to integer
+pop_number = int(pop_text)
+print(type(pop_number))
+print(pop_number / 1000)
+
+# Convert a number to text
+print(str(3.14))
+
+# Convert integer to float
+print(float(51))
+```
+
+Be careful with conversions — if Python cannot make sense of the conversion, it will raise an error:
+
+```{pyodide}
+# This will cause an error — uncomment to see it
+# int("hello")
+print("Cannot convert 'hello' to an integer!")
+```
+
+
+::: {.exercise-block}
+### Exercise 1: Variables and Types
+
+- Create a variable called `city` containing the name of a city you know
+- Create a variable called `pop` containing its approximate population
+- Create a boolean variable called `is_capital` indicating whether it is a capital city
+- Check the type of each variable using `type()`
+
+```{pyodide}
+#| exercise: ex_types
+
+```
+
+```{pyodide}
+#| exercise: ex_types
+#| solution: true
+city = "Manchester"
+pop = 553230
+is_capital = False
+
+print(type(city))
+print(type(pop))
+print(type(is_capital))
+```
+
+```{pyodide}
+#| exercise: ex_types
+#| hint: true
+# Use = to assign values
+# Text goes in quotes: "Manchester"
+# Numbers go without quotes: 553230
+# Boolean values are True or False (capitalised, no quotes)
+```
+:::
+
+
+## Lists
+
+In data analysis you almost always work with collections of values. In Python, the most versatile collection is a **list** — an ordered, changeable sequence of values that can contain any mix of types. You create lists with square brackets `[]`:
+
+```{pyodide}
+# A list of population values (thousands)
+populations = [486, 553, 1142, 267, 474]
+
+# A list of city names
+cities = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+# Display them
+print(populations)
+print(cities)
+```
+
+### List Operations
+
+You can perform many operations on lists:
+
+```{pyodide}
+# Length of a list
+print(len(cities))
+
+# Add an element to the end
+cities.append("Sheffield")
+print(cities)
+
+# Sort a list
+populations_sorted = sorted(populations)
+print(populations_sorted)
+
+# Check if an element exists
+print("Leeds" in cities)
+```
+
+### Indexing and Slicing
+
+You can extract specific elements from a list using square brackets. Python uses **0-based indexing**, meaning the first element is at position 0:
+
+```{pyodide}
+cities = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+# Get the first city (index 0)
+print(cities[0])
+
+# Get the third city (index 2)
+print(cities[2])
+
+# Get the last city (index -1)
+print(cities[-1])
+
+# Slice: get elements 1 to 3 (not including 3)
+print(cities[1:3])
+
+# Slice: first three elements
+print(cities[:3])
+
+# Slice: everything from index 2 onwards
+print(cities[2:])
+```
+
+::: {.callout-important}
+## Indexing Starts at 0
+Python counts from 0, not 1. This is different from R (which counts from 1) and is one of the most common sources of confusion when switching between the two languages. The first element is `[0]`, the second is `[1]`, and so on.
+:::
+
+### List Comprehensions
+
+Python has a concise way to create new lists by transforming existing ones, called **list comprehensions**:
+
+```{pyodide}
+# Convert populations from thousands to actual numbers
+populations = [486, 553, 1142, 267, 474]
+pop_actual = [p * 1000 for p in populations]
+print(pop_actual)
+
+# Filter: only populations above 500 thousand
+large_pops = [p for p in populations if p > 500]
+print(large_pops)
+```
+
+
+## Tuples and Dictionaries
+
+Python has two other important collection types beyond lists.
+
+### Tuples
+
+A **tuple** is like a list but **cannot be changed** (it is "immutable"). You create tuples with parentheses `()`. Tuples are useful for data that should not be modified, such as geographic coordinates:
+
+```{pyodide}
+# Coordinates of Liverpool (latitude, longitude)
+liverpool_coords = (53.4084, -2.9916)
+print(liverpool_coords)
+print(liverpool_coords[0])  # Access by index, just like a list
+
+# Tuples cannot be changed — this would cause an error:
+# liverpool_coords[0] = 54.0
+```
+
+### Dictionaries
+
+A **dictionary** stores **key-value pairs** — like a lookup table. This is Python's equivalent of a named list in R, and is extremely useful for structured data:
+
+```{pyodide}
+# A dictionary of city information
+city = {
+    "name": "Liverpool",
+    "population": 486100,
+    "is_capital": False,
+    "coordinates": (53.4084, -2.9916)
+}
+
+# Access values by key
+print(city["name"])
+print(city["population"])
+
+# Add a new key-value pair
+city["area_km2"] = 111.8
+print(city)
+```
+
+You can loop through a dictionary's keys and values:
+
+```{pyodide}
+city = {"name": "Liverpool", "population": 486100, "area_km2": 111.8}
+
+for key, value in city.items():
+    print(f"{key}: {value}")
+```
+
+
+## Categorical Data
+
+In urban analytics and the social sciences, you frequently work with **categorical data** — variables that take a limited set of values, such as land use types, socioeconomic classifications, or survey responses. While Python does not have a built-in "factor" type like R, the `pandas` library provides the `Categorical` type for this purpose. For now, you can represent categories as simple lists or use basic counting:
+
+```{pyodide}
+# A list of land use types for different parcels
+land_use = ["Residential", "Commercial", "Residential", "Industrial",
+            "Commercial", "Residential", "Park"]
+
+# Get unique values
+print(set(land_use))
+
+# Count occurrences
+from collections import Counter
+counts = Counter(land_use)
+print(counts)
+```
+
+We will work much more with categorical data using pandas in later practicals.
+
+
+## Working with Strings
+
+Text data — called **strings** in Python — is common in urban analytics. You might work with place names, postcodes, survey responses, or text scraped from the web. Python has powerful built-in string methods:
+
+```{pyodide}
+greeting = "Hello, Urban Analytics!"
+
+# How many characters?
+print(len(greeting))
+
+# Extract a substring (slicing)
+print(greeting[7:12])
+
+# Convert case
+print(greeting.lower())
+print(greeting.upper())
+
+# Find and replace text
+print(greeting.replace("Hello", "Welcome to"))
+```
+
+### F-Strings (Formatted String Literals)
+
+Python's **f-strings** are the modern way to embed variables inside text. They are more readable than concatenation and are used extensively:
+
+```{pyodide}
+city = "Liverpool"
+year = 2024
+population = 486100
+
+# f-string: prefix the string with f, use curly braces for variables
+print(f"The city is {city}")
+print(f"Report_{city}_{year}.csv")
+print(f"{city} has a population of {population:,}")  # :, adds thousand separators
+```
+
+### Searching Within Strings
+
+```{pyodide}
+city = "Liverpool"
+
+# Does it contain a substring?
+print("pool" in city)
+
+# Find the position of a substring
+print(city.find("pool"))
+
+# Does it start or end with something?
+print(city.startswith("Liver"))
+print(city.endswith("ham"))
+```
+
+### String Methods on Lists
+
+You can use list comprehensions to apply string operations to a list of values:
+
+```{pyodide}
+cities = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+# Find cities containing "er"
+matching = [c for c in cities if "er" in c]
+print(matching)
+
+# Convert all to uppercase
+upper_cities = [c.upper() for c in cities]
+print(upper_cities)
+```
+
+
+## Numeric and Statistical Functions
+
+Python's built-in functions cover basic numeric operations, and the `statistics` module provides common statistical functions:
+
+```{pyodide}
+import random
+import statistics
+
+# Generate some example data — 100 random values between 0 and 1
+random.seed(42)
+h = [random.random() for _ in range(100)]
+
+# Central tendency
+print(f"Mean: {statistics.mean(h):.4f}")
+print(f"Median: {statistics.median(h):.4f}")
+
+# Spread
+print(f"Std Dev: {statistics.stdev(h):.4f}")
+print(f"Min: {min(h):.4f}")
+print(f"Max: {max(h):.4f}")
+```
+
+Other useful numeric functions:
+
+```{pyodide}
+import math
+
+print(round(5.756, 2))     # Round to 2 decimal places
+print(round(5.756))         # Round to nearest integer
+print(math.sqrt(25))        # Square root
+print(math.log10(1000))     # Log base 10
+print(abs(-7))              # Absolute value
+```
+
+
+::: {.exercise-block}
+### Exercise 2: List Operations
+
+The populations (in thousands) of five English cities are: Liverpool: 486, Manchester: 553, Birmingham: 1142, Newcastle: 267, Leeds: 474.
+
+1. Create a list called `pops` with these values
+2. Create a list called `names` with the city names
+3. Calculate the mean population (hint: `sum(pops) / len(pops)`)
+4. Find which city has the maximum population (hint: use `pops.index(max(pops))` to find the position, then index into `names`)
+
+```{pyodide}
+#| exercise: ex_lists
+
+```
+
+```{pyodide}
+#| exercise: ex_lists
+#| solution: true
+pops = [486, 553, 1142, 267, 474]
+names = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+mean_pop = sum(pops) / len(pops)
+print(f"Mean population: {mean_pop}")
+
+max_index = pops.index(max(pops))
+print(f"Largest city: {names[max_index]}")
+```
+
+```{pyodide}
+#| exercise: ex_lists
+#| hint: true
+# sum() adds up all elements, len() counts them
+# max() finds the largest value
+# .index() finds the position of a value in a list
+# Use that position to index into the names list
+```
+:::
+
+
+## Operators
+
+### Arithmetic Operators
+
+You have already seen the basic arithmetic operators. Here is the complete set:
+
+```{pyodide}
+print(10 + 3)     # Addition
+print(10 - 3)     # Subtraction
+print(10 * 3)     # Multiplication
+print(10 / 3)     # Division (always returns a float)
+print(10 ** 3)    # Exponentiation (10 to the power of 3)
+print(10 % 3)     # Modulo (remainder after division)
+print(10 // 3)    # Integer division (quotient without remainder)
+```
+
+### Comparison Operators
+
+Comparison operators compare two values and return `True` or `False`. These are fundamental for filtering data:
+
+```{pyodide}
+print(5 < 7)      # Less than
+print(8 > 2)      # Greater than
+print(7 <= 5)     # Less than or equal to
+print(2 >= 2)     # Greater than or equal to
+print(3 == 3)     # Equal to (note: two equals signs!)
+print(3 != 4)     # Not equal to
+```
+
+### Logical Operators
+
+Python uses the English words `and`, `or`, and `not` for logical operators (rather than symbols like `&` and `|`). These let you combine conditions:
+
+```{pyodide}
+a = "Hello"
+b = "Goodbye"
+
+# or: True if at least one side is True
+print((a == "Hello") or (b == "Dog"))
+
+# and: True only if both sides are True
+print((a == "Hello") and (b == "Dog"))
+
+# not: reverses True to False and vice versa
+print(not (a == "Hello"))
+```
+
+Logical operators work with list comprehensions for powerful data filtering:
+
+```{pyodide}
+ages = [22, 45, 18, 67, 33, 15, 52]
+
+# Which ages are between 18 and 65?
+working_age = [a for a in ages if a >= 18 and a <= 65]
+print(working_age)
+```
+
+
+## Conditional Statements
+
+Programs often need to make decisions — do one thing if a condition is met, and something different otherwise. Python uses `if`, `elif` (short for "else if"), and `else`:
+
+```{pyodide}
+temperature = 28
+
+if temperature > 25:
+    print("It's a warm day — consider the urban heat island effect!")
+else:
+    print("It's a cool day.")
+```
+
+You can chain multiple conditions with `elif`:
+
+```{pyodide}
+temperature = 15
+
+if temperature > 30:
+    print("Hot — potential heat stress in urban areas")
+elif temperature > 20:
+    print("Warm — comfortable outdoor conditions")
+elif temperature > 10:
+    print("Cool — typical UK urban temperature")
+else:
+    print("Cold — increased energy demand for heating")
+```
+
+::: {.callout-important}
+## Indentation Matters
+Python uses **indentation** (spaces at the start of a line) to define blocks of code. The lines inside an `if`, `for`, or function must be indented consistently (by convention, 4 spaces). This is different from R, which uses curly braces `{}`. If your indentation is inconsistent, Python will raise an `IndentationError`.
+:::
+
+
+::: {.exercise-block}
+### Exercise 3: Conditionals
+
+Write an if/elif/else statement that:
+
+- Creates a variable `density` with a value of your choosing
+- Prints "High density" if density is above 5000 (people per sq km)
+- Prints "Medium density" if density is between 1000 and 5000
+- Prints "Low density" otherwise
+
+```{pyodide}
+#| exercise: ex_conditional
+
+```
+
+```{pyodide}
+#| exercise: ex_conditional
+#| solution: true
+density = 3200
+
+if density > 5000:
+    print("High density")
+elif density >= 1000:
+    print("Medium density")
+else:
+    print("Low density")
+```
+
+```{pyodide}
+#| exercise: ex_conditional
+#| hint: true
+# Use if ... : elif ... : else:
+# Remember to indent the print() statements inside each block
+# Use > for greater than, >= for greater than or equal to
+```
+:::
+
+
+## Loops
+
+Loops let you repeat an operation multiple times. This is useful when you need to process a collection of items — for example, calculating a statistic for each neighbourhood in a city.
+
+### For Loops
+
+A `for` loop iterates over each element of a list (or any iterable):
+
+```{pyodide}
+# Print each city name
+cities = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+for city in cities:
+    print(f"Processing: {city}")
+```
+
+The `range()` function generates a sequence of numbers, which is useful for counting loops:
+
+```{pyodide}
+# Calculate the square of each number from 1 to 5
+for i in range(1, 6):
+    result = i ** 2
+    print(f"{i} squared is {result}")
+```
+
+### While Loops
+
+A `while` loop repeats as long as a condition remains `True`. Be careful — if the condition never becomes `False`, the loop runs forever!
+
+```{pyodide}
+# Double a value until it exceeds 1000
+value = 1
+count = 0
+
+while value <= 1000:
+    value = value * 2
+    count = count + 1
+
+print(f"After {count} doublings, the value is {value}")
+```
+
+### Looping with enumerate()
+
+When you need both the index and the value during a loop, use `enumerate()`:
+
+```{pyodide}
+cities = ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"]
+
+for i, city in enumerate(cities):
+    print(f"City {i + 1}: {city}")
+```
+
+::: {.callout-tip}
+## List Comprehensions vs. Loops
+Python's list comprehensions (introduced earlier) offer a concise alternative to for loops when you want to transform or filter a list. For example, `[x**2 for x in range(1, 6)]` is more compact than a for loop that builds the same list. Use comprehensions for simple transformations, and explicit loops when the logic is more complex.
+:::
+
+
+## Writing Functions
+
+As your analyses grow, you will find yourself repeating the same sequence of operations. Rather than copying and pasting code, you can wrap it in a **function** — a reusable block of code that takes inputs (called **parameters**) and returns a result.
+
+```{pyodide}
+# Define a function to calculate population density
+def calc_density(population, area):
+    density = population / area
+    return density
+
+# Use the function
+print(calc_density(486100, 111.8))
+print(calc_density(553230, 115.6))
+```
+
+Functions keep your code organised and reduce errors. If you need to change how density is calculated, you only need to change it in one place.
+
+You can also set **default values** for parameters:
+
+```{pyodide}
+def pop_summary(name, population, unit="thousands"):
+    if unit == "thousands":
+        pop_display = population / 1000
+    else:
+        pop_display = population
+    print(f"{name} has a population of {pop_display:.1f} {unit}")
+
+pop_summary("Liverpool", 486100)
+pop_summary("Liverpool", 486100, unit="people")
+```
+
+
+::: {.exercise-block}
+### Exercise 4: Writing a Function
+
+Write a function called `classify_area` that takes a population density value and returns a string classification:
+
+- `"Rural"` if density < 100
+- `"Suburban"` if density >= 100 and < 1000
+- `"Urban"` if density >= 1000 and < 5000
+- `"Dense Urban"` if density >= 5000
+
+Test it with: `classify_area(3500)` — it should return `"Urban"`.
+
+```{pyodide}
+#| exercise: ex_function
+
+```
+
+```{pyodide}
+#| exercise: ex_function
+#| solution: true
+def classify_area(density):
+    if density < 100:
+        return "Rural"
+    elif density < 1000:
+        return "Suburban"
+    elif density < 5000:
+        return "Urban"
+    else:
+        return "Dense Urban"
+
+print(classify_area(3500))
+print(classify_area(50))
+print(classify_area(8000))
+```
+
+```{pyodide}
+#| exercise: ex_function
+#| hint: true
+# Define with: def function_name(parameter):
+# Use if/elif/else inside the function body
+# Use return to send back the result
+# Remember to indent everything inside the function
+```
+:::
+
+
+## DataFrames: A First Look
+
+The most important data structure for data analysis in Python is the **DataFrame**, provided by the `pandas` library. A DataFrame is essentially a table — like a spreadsheet — where each column is a variable and each row is an observation. Almost all urban data you work with will be stored in DataFrames.
+
+```{pyodide}
+import pandas as pd
+
+# Create a simple DataFrame
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+
+# View the DataFrame
+cities_df
+```
+
+### Inspecting a DataFrame
+
+Pandas provides many methods to explore a DataFrame:
+
+```{pyodide}
+import pandas as pd
+
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+
+# Dimensions: rows and columns
+print(f"Shape: {cities_df.shape}")
+print(f"Rows: {len(cities_df)}")
+
+# Column names and types
+print(cities_df.dtypes)
+
+# Summary statistics
+cities_df.describe()
+```
+
+### Accessing Columns and Rows
+
+```{pyodide}
+import pandas as pd
+
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+
+# Access a column by name
+print(cities_df["city"])
+print()
+
+# Access a specific row by position (row 1, i.e. Manchester)
+print(cities_df.iloc[1])
+print()
+
+# Access a specific cell
+print(cities_df.iloc[1, 2])  # Row 1, column 2
+```
+
+### Adding New Columns
+
+You can create new columns by assigning values:
+
+```{pyodide}
+import pandas as pd
+
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+
+# Calculate population density and add it as a new column
+cities_df["density"] = (cities_df["population"] / cities_df["area_km2"]).round(1)
+
+cities_df
+```
+
+
+::: {.exercise-block}
+### Exercise 5: Working with DataFrames
+
+Using the `cities_df` DataFrame created in the code block below:
+
+1. Find the city with the highest population density
+2. Calculate the total population of all five cities
+3. Create a new boolean column called `large_city` that is `True` if the population is above 500,000
+
+```{pyodide}
+#| exercise: ex_dataframe
+import pandas as pd
+
+# The DataFrame is recreated here because each exercise runs independently
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+cities_df["density"] = (cities_df["population"] / cities_df["area_km2"]).round(1)
+
+# Your code here
+
+```
+
+```{pyodide}
+#| exercise: ex_dataframe
+#| solution: true
+import pandas as pd
+
+cities_df = pd.DataFrame({
+    "city": ["Liverpool", "Manchester", "Birmingham", "Newcastle", "Leeds"],
+    "population": [486100, 553230, 1141816, 267760, 474632],
+    "area_km2": [111.8, 115.6, 267.8, 113.4, 551.7]
+})
+cities_df["density"] = (cities_df["population"] / cities_df["area_km2"]).round(1)
+
+# 1. City with highest density
+max_idx = cities_df["density"].idxmax()
+print(f"Highest density: {cities_df.loc[max_idx, 'city']}")
+
+# 2. Total population
+print(f"Total population: {cities_df['population'].sum():,}")
+
+# 3. Large city indicator
+cities_df["large_city"] = cities_df["population"] > 500000
+print(cities_df)
+```
+
+```{pyodide}
+#| exercise: ex_dataframe
+#| hint: true
+# .idxmax() returns the row index of the maximum value in a column
+# .sum() adds up all values in a column
+# Comparison operators (>) return True/False, which you can store as a new column
+```
+:::
+
+
+## Getting Help
+
+Python has built-in help for every function and object. You can access it using the `help()` function:
+
+```{pyodide}
+help(len)
+```
+
+For pandas objects, the documentation is extensive. You can also use `dir()` to see all available methods on an object:
+
+```{pyodide}
+# See what methods are available on a string
+text = "hello"
+# Uncomment the next line to see all string methods:
+# print(dir(text))
+
+# The most useful ones start without an underscore
+useful = [m for m in dir(text) if not m.startswith("_")]
+print(useful)
+```
+
+
+::: {.capstone}
+## Capstone Exercise
+
+This exercise brings together everything you have learned in this practical. You have data on monthly average temperatures (°C) in London for 2023, provided in the code block below.
+
+1. Create a pandas DataFrame with columns `month` and `temperature`
+2. Add a column called `season` that classifies each month: Dec-Feb = "Winter", Mar-May = "Spring", Jun-Aug = "Summer", Sep-Nov = "Autumn" (hint: you can create a list of season labels and assign it)
+3. Write a function called `temp_to_f` that converts Celsius to Fahrenheit (formula: F = C × 9/5 + 32)
+4. Use your function to add a `temp_f` column
+5. Find the mean temperature for the year in both Celsius and Fahrenheit
+
+```{pyodide}
+#| exercise: ex_capstone
+#| min-lines: 20
+import pandas as pd
+
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+temps = [5.1, 5.6, 8.2, 10.0, 14.2, 18.7,
+         20.5, 19.8, 16.3, 12.5, 8.1, 5.8]
+
+# Your code here
+
+```
+
+```{pyodide}
+#| exercise: ex_capstone
+#| solution: true
+import pandas as pd
+
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+temps = [5.1, 5.6, 8.2, 10.0, 14.2, 18.7,
+         20.5, 19.8, 16.3, 12.5, 8.1, 5.8]
+
+# 1. Create DataFrame
+london = pd.DataFrame({"month": months, "temperature": temps})
+
+# 2. Add season column
+london["season"] = ["Winter", "Winter", "Spring", "Spring", "Spring", "Summer",
+                     "Summer", "Summer", "Autumn", "Autumn", "Autumn", "Winter"]
+
+# 3. Conversion function
+def temp_to_f(celsius):
+    return celsius * 9/5 + 32
+
+# 4. Add Fahrenheit column
+london["temp_f"] = london["temperature"].apply(temp_to_f).round(1)
+
+# 5. Mean temperatures
+print(f"Mean (Celsius): {london['temperature'].mean():.1f}")
+print(f"Mean (Fahrenheit): {london['temp_f'].mean():.1f}")
+
+# Display the full DataFrame
+london
+```
+
+```{pyodide}
+#| exercise: ex_capstone
+#| hint: true
+# Step 1: pd.DataFrame({"column_name": list, ...})
+# Step 2: Create a list with 12 elements matching the seasons
+# Step 3: def temp_to_f(celsius): return celsius * 9/5 + 32
+# Step 4: Use .apply() to run a function on every row of a column
+# Step 5: .mean() calculates the average of a column
+```
+:::
+
+
+## Summary
+
+In this practical you have learned the fundamental building blocks of programming in Python:
+
+- **Variables** store values for reuse, and every value has a **type** (int, float, str, bool)
+- **Lists** hold ordered collections of any type, and support indexing, slicing, and list comprehensions
+- **Tuples** are immutable sequences, useful for fixed data like coordinates
+- **Dictionaries** store key-value pairs, ideal for structured data
+- **String methods** let you manipulate text data (searching, replacing, formatting with f-strings)
+- **Numeric functions** and the `statistics` module provide summaries (mean, median, standard deviation)
+- **Operators** perform arithmetic, comparison, and logical operations
+- **Conditional statements** (`if`/`elif`/`else`) let your code make decisions
+- **Loops** (`for`, `while`) repeat operations over collections of values
+- **Functions** package reusable logic and make your code more organised
+- **DataFrames** (from pandas) are Python's core structure for tabular data — you will use them extensively in every subsequent practical
+
+In the next practical, you will learn how to import real-world data into Python, manipulate it using pandas, and prepare it for analysis.
+
+
+## Further Resources
+
+- [Python for Data Analysis (3rd edition)](https://wesmckinney.com/book/) — Wes McKinney
+- [The Official Python Tutorial](https://docs.python.org/3/tutorial/) — Python Software Foundation
+- [Geographic Data Science with Python](https://geographicdata.science/book/) — Rey, Arribas-Bel & Wolf

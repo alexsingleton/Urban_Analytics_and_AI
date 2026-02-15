@@ -1,0 +1,7 @@
+---
+title: "Urban Analytics: Practical Labs"
+---
+
+Welcome to the interactive practical labs supporting the Urban Analytics book.
+
+Choose a practical from the navigation bar above to get started.

@@ -1,0 +1,101 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Urban Analytics and AI"
+  description: "Interactive practical materials supporting Urban Analytics (Singleton, Spielman & Folch, 2018)"
+  
+  margin-header: |
+    [![](../images/geodslogo25.svg){fig-alt="GeoDS Logo" width="180px"}](https://www.geods.ac.uk)
+
+  navbar:
+    title: false
+    background: primary
+    right:
+      - icon: linkedin
+        href: https://www.linkedin.com/company/geographic-data-service/
+        aria-label: LinkedIn
+      - icon: github
+        href: https://github.com/alexsingleton/urban_analytics
+        aria-label: GitHub
+
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "R Practicals"
+        menu:
+          - text: "1. Introduction to R"
+            href: introduction/practical_01_r.qmd
+          - text: "2. Data Manipulation"
+            href: data_manipulation/practical_02_r.qmd
+          - text: "3. Basic SQL"
+            href: basic_sql/practical_03_r.qmd
+          - text: "4. Descriptive Statistics"
+            href: descriptive_statistics/practical_04_r.qmd
+          - text: "5. Charts and Graphs"
+            href: data_viz_charts/practical_05_r.qmd
+          - text: "6. Mapping Areas"
+            href: data_viz_mapping_areas/practical_06_r.qmd
+          - text: "7. Visualizing Point Patterns"
+            href: data_viz_point_patterns/practical_07_r.qmd
+          - text: "8. Mapping Flows"
+            href: data_viz_mapping_flows/practical_08_r.qmd
+          - text: "9. Linking to the Web"
+            href: linking_web/practical_09_r.qmd
+          - text: "10. Geodemographics"
+            href: geodemographics/practical_10_r.qmd
+          - text: "11. Indices"
+            href: indices/practical_11_r.qmd
+          - text: "12. Spatial Relationships"
+            href: spatial_relationships/practical_12_r.qmd
+          - text: "13. Regression"
+            href: regression/practical_13_r.qmd
+          - text: "14. Agent-Based Modelling"
+            href: abm/practical_14_r.qmd
+          - text: "15. Network Analysis"
+            href: network_analysis/practical_15_r.qmd
+      - text: "Python Practicals"
+        menu:
+          - text: "1. Introduction to Python"
+            href: introduction/practical_01_python.qmd
+          - text: "2. Data Manipulation"
+            href: data_manipulation/practical_02_python.qmd
+          - text: "3. Basic SQL"
+            href: basic_sql/practical_03_python.qmd
+          - text: "4. Descriptive Statistics"
+            href: descriptive_statistics/practical_04_python.qmd
+          - text: "5. Charts and Graphs"
+            href: data_viz_charts/practical_05_python.qmd
+          - text: "6. Mapping Areas"
+            href: data_viz_mapping_areas/practical_06_python.qmd
+          - text: "7. Visualizing Point Patterns"
+            href: data_viz_point_patterns/practical_07_python.qmd
+          - text: "8. Mapping Flows"
+            href: data_viz_mapping_flows/practical_08_python.qmd
+          - text: "9. Linking to the Web"
+            href: linking_web/practical_09_python.qmd
+          - text: "10. Geodemographics"
+            href: geodemographics/practical_10_python.qmd
+          - text: "11. Indices"
+            href: indices/practical_11_python.qmd
+          - text: "12. Spatial Relationships"
+            href: spatial_relationships/practical_12_python.qmd
+          - text: "13. Regression"
+            href: regression/practical_13_python.qmd
+          - text: "14. Agent-Based Modelling"
+            href: abm/practical_14_python.qmd
+          - text: "15. Network Analysis"
+            href: network_analysis/practical_15_python.qmd
+
+  page-footer:
+    center: "Urban Analytics: Supporting Materials | Singleton, Spielman & Folch (2018) | CC BY-SA 4.0"
+
+format:
+  live-html:
+    theme: [cosmo, custom.scss]
+    toc: true
+    toc-depth: 3
+    code-tools: true
+
+engine: knitr
